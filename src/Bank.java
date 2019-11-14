@@ -189,8 +189,7 @@ public class Bank {
     
     private static BankAccount parseBankAccount(String account) {
         return new BankAccount(Bank.parsePin(account),
-            Bank.parseAccountNo(account),
-            Bank.parseBalance(account),
+        	Bank.parseAccountNo(account),
             Bank.parseUser(account)
         );
     }
