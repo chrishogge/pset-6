@@ -189,7 +189,7 @@ public class Bank {
     
     private static BankAccount parseBankAccount(String account) {
         return new BankAccount(Bank.parsePin(account),
-        	Bank.parseAccountNo(account),
+            Bank.parseAccountNo(account), 
             Bank.parseUser(account)
         );
     }
@@ -238,5 +238,96 @@ public class Bank {
     
     private static double parseBalance(String account) {
         return Double.parseDouble(account.substring(BALANCE_START).strip());
+    }
+    
+    public long findLine(long accountNo) {
+    	String accountNoString = Long.toString(accountNo);
+    	String strCurrentLine;
+    	int lineCount = -1;
+    	try (BufferedReader br = new BufferedReader(new FileReader(new File(DATA)))) {
+	    	while ((strCurrentLine = br.readLine()) != null) {
+	    		lineCount++;
+	    	    if(strCurrentLine.substring(0,ACCT_END).equals(accountNoString)) {
+	    	    	return lineCount;
+	    	    }
+	    	}
+    	}catch (FileNotFoundException e) {
+	            System.err.println("Error: Unable to find data file.");
+	            
+	            return -1;
+	        } catch (IOException e) {
+	            System.err.println("Error: Unable to read from data file.");
+	            
+	            return -1;
+	        }
+    	return -1;
+    }
+    
+    public double returnBalance(long accountNo) {
+    	int lineNo = (int) findLine(accountNo);
+    	int lineCount = -1;
+    	String strCurrentLine;
+    	try (BufferedReader br = new BufferedReader(new FileReader(new File(DATA)))) {
+	    	while ((strCurrentLine = br.readLine()) != null) {
+	    		lineCount++;
+	    	    if(lineCount == lineNo) {
+	    	    	return Double.parseDouble(strCurrentLine.substring(BALANCE_START).strip());
+	    	    }
+	    	}
+    	}catch (FileNotFoundException e) {
+	            System.err.println("Error: Unable to find data file.");
+	            
+	            return -1;
+	        } catch (IOException e) {
+	            System.err.println("Error: Unable to read from data file.");
+	            
+	            return -1;
+	        }
+    	return -1;
+    }
+    
+    public String updateBalance(double balanceAddition, long accountNo) {
+    	int lineNumber = (int)findLine(accountNo);
+    	double currentBalance = returnBalance(accountNo) + balanceAddition;
+    	System.out.println(returnBalance(accountNo));
+    	System.out.println(balanceAddition);
+    	System.out.println(currentBalance);
+    	String currentBalanceString = Double.toString(currentBalance);
+    	int spaces = 79 - currentBalanceString.length();
+    	String balSpaces = "";
+    	for(int i = 0; i < spaces; i++) {
+    		balSpaces += " ";
+    	}
+    	
+    	System.out.println("Spaces : " + balSpaces);
+    	
+    	currentBalanceString = balSpaces + currentBalanceString;
+    	
+    	System.out.println("CurrentBalanceString: " + currentBalanceString);
+    	
+    	int lineCount = -1;
+    	String strCurrentLine;
+    	String modifiedLine;
+    	int lineNo = (int)findLine(accountNo);
+    	try (BufferedReader br = new BufferedReader(new FileReader(new File(DATA)))) {
+	    	while ((strCurrentLine = br.readLine()) != null) {
+	    		lineCount++;
+	    	    if(lineCount == lineNo) {
+	    	    	modifiedLine = strCurrentLine.substring(0,BALANCE_START) + currentBalanceString;
+	    	    	System.out.print(modifiedLine);
+	    	    	return modifiedLine;
+	    	    }
+	    	}
+    	}catch (FileNotFoundException e) {
+	            System.err.println("Error: Unable to find data file.");
+	            
+	            return null;
+	        } catch (IOException e) {
+	            System.err.println("Error: Unable to read from data file.");
+	            
+	            return null;
+	        }
+    	
+    	return null;
     }
 }

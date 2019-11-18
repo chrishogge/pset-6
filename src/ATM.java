@@ -43,32 +43,37 @@ public class ATM {
     
     public void startup() {
     	System.out.print("\nWelcome to the AIT ATM!");
-        
-        System.out.print("Account No.: ");
-        String accountNoString = in.next();
+    	
+    	boolean newAccount = true;
+    	
+    	System.out.print("\nAccount No.: ");
+    	String accountNoString = in.next();
+    	
+    	
+    	while(newAccount) {
         
         if(accountNoString.equals("+")) {
-        	System.out.print("\nFirst name: ");
-        	String newFirstName = in.next();
-        	
-        	System.out.print("\nLast name: ");
-        	String newLastName = in.next();
-        	
-        	System.out.print("\nPin: ");
-        	int newPin = in.nextInt();
-        	
-        	activeAccount = bank.createAccount(newPin, new User(newFirstName, newLastName));
-        	
-        	System.out.print("\nThank you. Your account number is " + activeAccount.getAccountNo() + ".");
-        	System.out.print("\nPlease login to access your newly created account.");
+        	newAccount();
+        }else if(!(accountNoString.contentEquals("+")) && isNum(accountNoString)) {
+        	newAccount = false;
         }
-        long accountNo = 0;	
-        System.out.print("PIN        :");
+        
+        System.out.print("\nAccount No.: ");
+    	accountNoString = in.next();
+        
+    	}
+    	
+    	long accountNo = Long.parseLong(accountNoString);
+    	
+    	System.out.print("PIN        : ");
         int pin = in.nextInt();
         
+        activeAccount = bank.login(accountNo, pin);
+        
         if(isValidLogin(accountNo, pin)) {
-        	System.out.print("\nHello, again " + activeAccount.getAccountHolder().getFirstName() + "!\n");
         	
+        	System.out.print("\nHello, again " + activeAccount.getAccountHolder().getFirstName() + "!\n");
+
         	boolean validLogin = true;
         	while(validLogin) {
         		switch(getSelection()) {
@@ -100,7 +105,8 @@ public class ATM {
     }
     
     public void showBalance() {
-    	System.out.println("\nCurrent balance: " + activeAccount.getBalance());
+//    	System.out.println("\nCurrent balance: " + activeAccount.getBalance());
+    	System.out.println(bank.returnBalance(100000005));
     }
     
     public void deposit() {
@@ -113,6 +119,9 @@ public class ATM {
     	}else if(status == ATM.SUCCESS) {
     		System.out.println("\nDeposit accepted.\n");
     	}
+    	
+    	bank.update(bank.getAccount(activeAccount.getAccountNo()));
+    	bank.updateBalance(5.5, 100000005);
     }
     
     public void withdraw() {
@@ -136,10 +145,26 @@ public class ATM {
     public boolean isNum(String inputString) {
     	try {
         	long stringNum = Long.parseLong(inputString);
-        } catch(NumberFormatException | NullPointException nfe) {
+        } catch(NumberFormatException | NullPointerException nfe) {
         	return false;
         }
     	return true;
+    }
+    
+    public void newAccount() {
+    	System.out.print("\nFirst name: ");
+    	String newFirstName = in.next();
+    	
+    	System.out.print("\nLast name: ");
+    	String newLastName = in.next();
+    	
+    	System.out.print("\nPin: ");
+    	int newPin = in.nextInt();
+    	
+    	activeAccount = bank.createAccount(newPin, new User(newFirstName, newLastName));
+    	
+    	System.out.print("\nThank you. Your account number is " + activeAccount.getAccountNo() + ".");
+    	System.out.print("\nPlease login to access your newly created account.");
     }
     
     /*

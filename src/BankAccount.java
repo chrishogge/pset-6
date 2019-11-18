@@ -8,6 +8,7 @@ public class BankAccount {
     private long accountNo;
     private double balance;
     private User accountHolder;
+    private Bank bank;
     
     ////////////////////////////////////////////////////////////////////////////
     //                                                                        //
@@ -56,8 +57,7 @@ public class BankAccount {
     }
     
     public double getBalance() {
-    	NumberFormat currency = NumberFormat.getCurrencyInstance();
-    	return balance;
+    	return Bank.parseBalance(Bank.getAccount(accountNo).toString());
     }
     
     public User getAccountHolder() {
