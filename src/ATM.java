@@ -17,8 +17,25 @@ public class ATM {
     public static final int INSUFFICIENT = 1;
     public static final int SUCCESS = 2;
     
+    public static final int FIRST_NAME_MIN_WIDTH = 1;
     public static final int FIRST_NAME_WIDTH = 20;
+    public static final int LAST_NAME_MIN_WIDTH = 1;
     public static final int LAST_NAME_WIDTH = 30;
+    
+    public static final int PIN_WIDTH = 4;
+    public static final int PIN_MIN = 1000;
+    public static final int PIN_MAX = 9999;
+    
+    public static final int ACCOUNT_NO_WIDTH = 9;
+    public static final long ACCOUNT_NO_MIN = 100000001;
+    public static final long ACCOUNT_NO_MAX = 999999999;
+    
+    public static final int BALANCE_WIDTH = 15;
+    public static final double BALANCE_MIN = 0.00;
+    public static final double BALANCE_MAX = 999999999999.99;
+    
+    
+    
     
     ////////////////////////////////////////////////////////////////////////////
     //                                                                        //
