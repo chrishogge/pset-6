@@ -156,6 +156,7 @@ public class ATM {
     	}
     	
     	bank.update(bank.getAccount(activeAccount.getAccountNo()));
+    	bank.save();
     	
     }
     
@@ -171,6 +172,7 @@ public class ATM {
         } else if (status == ATM.SUCCESS) {
             System.out.println("\nWithdrawal accepted.\n");
         }
+        bank.save();
     }
     
     public void transfer() {
@@ -185,6 +187,8 @@ public class ATM {
     	transferAccount.deposit(transferAmount);
     	
     	System.out.print("\nTransfer accepted.");
+    	
+    	bank.save();
     	
     }
     
