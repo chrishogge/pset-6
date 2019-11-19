@@ -47,19 +47,18 @@ public class ATM {
     	boolean newAccount = true;
     	
     	System.out.print("\nAccount No.: ");
-    	String accountNoString = in.next();
+    	String accountNoString = in.nextLine();
     	
     	
     	while(newAccount) {
         
         if(accountNoString.equals("+")) {
         	newAccount();
+        	System.out.print("\nAccount No.: ");
+        	accountNoString = in.nextLine();
         }else if(!(accountNoString.contentEquals("+")) && isNum(accountNoString)) {
         	newAccount = false;
         }
-        
-        System.out.print("\nAccount No.: ");
-    	accountNoString = in.next();
         
     	}
     	
@@ -67,26 +66,59 @@ public class ATM {
     	
     	System.out.print("PIN        : ");
         int pin = in.nextInt();
-        
-        activeAccount = bank.login(accountNo, pin);
-        
-        if(isValidLogin(accountNo, pin)) {
-        	
-        	System.out.print("\nHello, again " + activeAccount.getAccountHolder().getFirstName() + "!\n");
-
-        	boolean validLogin = true;
-        	while(validLogin) {
-        		switch(getSelection()) {
-        		case VIEW: showBalance();break;
-        		case DEPOSIT: deposit();break;
-        		case WITHDRAW: withdraw();break;
-        		case TRANSFER: transfer();break;
-        		case LOGOUT: validLogin = false;break;
-        		default: System.out.println("\nInvalid selection.\n");
+        boolean loginCycle = true;
+        while(loginCycle) {
+        		try {
+        			activeAccount = bank.login(accountNo, pin);
+        			accountNo = activeAccount.getAccountNo();
+        		}catch(NullPointerException nfe) {
+        			if(accountNo == -1 && pin == -1) {
+        				System.out.print("\nGoodbye!");
+        				return;
+        			}else {
+        			System.out.print("\nInvalid account number and/or PIN.\n");
+        			System.out.print("\nAccount No.: ");
+        	    	accountNoString = in.nextLine();
+        	    	
+        	    	
+        	    	while(newAccount) {
+        	        
+        	        if(accountNoString.equals("+")) {
+        	        	newAccount();
+        	        }else if(!(accountNoString.contentEquals("+")) && isNum(accountNoString)) {
+        	        	newAccount = false;
+        	        }
+        	        
+        	        System.out.print("\nAccount No.: ");
+        	    	accountNoString = in.nextLine();
+        	        
+        	    	}
+        	    	
+        	    	accountNo = Long.parseLong(accountNoString);
+        	    	
+        	    	System.out.print("PIN        : ");
+        	        pin = in.nextInt();
+        			}
         		}
-        	}
-        }else {
-        	System.out.print("\nInvalid account number and/or pin.\n");
+	     
+        		loginCycle = false;
+        		activeAccount = bank.login(accountNo,pin);
+	            accountNo = activeAccount.getAccountNo();
+	            
+	        	
+	        	System.out.print("\nHello, again, " + activeAccount.getAccountHolder().getFirstName() + "!\n");
+	
+	        	boolean validLogin = true;
+	        	while(validLogin) {
+	        		switch(getSelection()) {
+	        		case VIEW: showBalance(accountNo);break;
+	        		case DEPOSIT: deposit();break;
+	        		case WITHDRAW: withdraw();break;
+	        		case TRANSFER: transfer();break;
+	        		case LOGOUT: validLogin = false;bank.save();break;
+	        		default: System.out.println("\nInvalid selection.\n");
+	        		}
+	        	}
         }
     }
     
@@ -94,8 +126,12 @@ public class ATM {
     	return accountNo==activeAccount.getAccountNo() && pin==activeAccount.getPin();
     }
     
+    public BankAccount accountLogin(long accountNo, int pin) {
+    	return bank.login(accountNo, pin);
+    }
+    
     public int getSelection() {
-    	System.out.println("[1] View Balance");
+    	System.out.println("\n[1] View Balance");
     	System.out.println("[2] Deposit Money");
     	System.out.println("[3] Withdraw Money");
     	System.out.println("[4] Transfer Money");
@@ -104,9 +140,8 @@ public class ATM {
     	return in.nextInt();
     }
     
-    public void showBalance() {
-//    	System.out.println("\nCurrent balance: " + activeAccount.getBalance());
-    	System.out.println(bank.returnBalance(100000005));
+    public void showBalance(long accountNo) {
+    	System.out.println(activeAccount.getBalance());
     }
     
     public void deposit() {
@@ -121,7 +156,7 @@ public class ATM {
     	}
     	
     	bank.update(bank.getAccount(activeAccount.getAccountNo()));
-    	bank.updateBalance(5.5, 100000005);
+    	
     }
     
     public void withdraw() {
@@ -139,24 +174,45 @@ public class ATM {
     }
     
     public void transfer() {
-    	System.out.print("\nhaha cool");
+    	System.out.print("\nEnter account: ");
+    	long transferAccountNo = in.nextLong();
+    	System.out.print("Enter amount: ");
+    	double transferAmount = in.nextDouble();
+    	
+    	BankAccount transferAccount = bank.getAccount(transferAccountNo);
+    	
+    	activeAccount.withdraw(transferAmount);
+    	transferAccount.deposit(transferAmount);
+    	
+    	System.out.print("\nTransfer accepted.");
+    	
     }
     
     public boolean isNum(String inputString) {
     	try {
-        	long stringNum = Long.parseLong(inputString);
+        	@SuppressWarnings("unused")
+			long stringNum = Long.parseLong(inputString);
         } catch(NumberFormatException | NullPointerException nfe) {
         	return false;
         }
     	return true;
     }
     
+    public boolean isntNullLogin(long accountNo, int pin) {
+    	try {
+    		isValidLogin(accountNo,pin);
+    	}catch(NullPointerException nfe) {
+    		return false;
+    	}
+    	return true;
+    }
+    
     public void newAccount() {
     	System.out.print("\nFirst name: ");
-    	String newFirstName = in.next();
+    	String newFirstName = in.nextLine();
     	
     	System.out.print("\nLast name: ");
-    	String newLastName = in.next();
+    	String newLastName = in.nextLine();
     	
     	System.out.print("\nPin: ");
     	int newPin = in.nextInt();
