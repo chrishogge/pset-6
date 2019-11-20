@@ -34,6 +34,10 @@ public class ATM {
     public static final double BALANCE_MIN = 0.00;
     public static final double BALANCE_MAX = 999999999999.99;
     
+    boolean session = true;
+    String accountNoString = "";
+    int pin;
+    
     
     
     
@@ -59,22 +63,37 @@ public class ATM {
     }
     
     public void startup() {
+    	
     	System.out.print("\nWelcome to the AIT ATM!");
+    	session = true;
+    	
+    	while(session) {
+    		
+    		accountLogin();
+    	
+    	}
+    }
+    
+    public void accountLogin() {
     	
     	boolean newAccount = true;
     	
     	System.out.print("\nAccount No.: ");
-    	String accountNoString = in.nextLine();
+    	accountNoString = in.next();
     	
     	
     	while(newAccount) {
         
         if(accountNoString.equals("+")) {
+        	
         	newAccount();
         	System.out.print("\nAccount No.: ");
-        	accountNoString = in.nextLine();
+        	accountNoString = in.next();
+        	
         }else if(!(accountNoString.contentEquals("+")) && isNum(accountNoString)) {
+        	
         	newAccount = false;
+        
         }
         
     	}
@@ -82,32 +101,44 @@ public class ATM {
     	long accountNo = Long.parseLong(accountNoString);
     	
     	System.out.print("PIN        : ");
-        int pin = in.nextInt();
+    	pin = in.nextInt();
+    	
         boolean loginCycle = true;
         while(loginCycle) {
         		try {
+        			
         			activeAccount = bank.login(accountNo, pin);
         			accountNo = activeAccount.getAccountNo();
+        			
         		}catch(NullPointerException nfe) {
+        			
         			if(accountNo == -1 && pin == -1) {
+        				
         				System.out.print("\nGoodbye!");
+        				session = false;
         				return;
+        				
         			}else {
+        				
         			System.out.print("\nInvalid account number and/or PIN.\n");
         			System.out.print("\nAccount No.: ");
-        	    	accountNoString = in.nextLine();
+        	    	accountNoString = in.next();
         	    	
         	    	
         	    	while(newAccount) {
         	        
         	        if(accountNoString.equals("+")) {
+        	        	
         	        	newAccount();
+        	        	
         	        }else if(!(accountNoString.contentEquals("+")) && isNum(accountNoString)) {
+        	        	
         	        	newAccount = false;
+        	        	
         	        }
         	        
         	        System.out.print("\nAccount No.: ");
-        	    	accountNoString = in.nextLine();
+        	    	accountNoString = in.next();
         	        
         	    	}
         	    	
@@ -126,14 +157,23 @@ public class ATM {
 	        	System.out.print("\nHello, again, " + activeAccount.getAccountHolder().getFirstName() + "!\n");
 	
 	        	boolean validLogin = true;
+	        	
 	        	while(validLogin) {
+	        		
 	        		switch(getSelection()) {
+	        		
 	        		case VIEW: showBalance(accountNo);break;
+	        		
 	        		case DEPOSIT: deposit();break;
+	        		
 	        		case WITHDRAW: withdraw();break;
+	        		
 	        		case TRANSFER: transfer();break;
+	        		
 	        		case LOGOUT: validLogin = false;bank.save();break;
+	        		
 	        		default: System.out.println("\nInvalid selection.\n");
+	        		
 	        		}
 	        	}
         }
@@ -229,19 +269,106 @@ public class ATM {
     }
     
     public void newAccount() {
-    	System.out.print("\nFirst name: ");
-    	String newFirstName = in.nextLine();
+    	boolean validFirstName = true;
+    	boolean validLastName = true;
+    	boolean validPinNumberRange = true;
+    	boolean validPinNumberLength = true;
     	
-    	System.out.print("\nLast name: ");
-    	String newLastName = in.nextLine();
+    	String newFirstName = "";
+    	String newLastName = "";
+    	int newPin = 0;
     	
-    	System.out.print("\nPin: ");
-    	int newPin = in.nextInt();
+    	while(validFirstName) {
+	    	System.out.print("\nFirst name: ");
+	    	newFirstName = in.next();
+	    	if(verifyName(FIRST_NAME_MIN_WIDTH, FIRST_NAME_WIDTH, newFirstName)) {
+	    		validFirstName = false;
+	    	}
+    	
+    	}
+    	
+    	while(validLastName) {
+	    	System.out.print("\nLast name: ");
+	    	newLastName = in.next();
+	    	if(verifyName(LAST_NAME_MIN_WIDTH, LAST_NAME_WIDTH, newLastName)) {
+	    		validLastName = false;
+	    	}
+    	
+    	}
+    	
+//    	while(validPinNumberRange && validPinNumberLength) {
+//    		System.out.print("\nPin: ");
+//    		newPin = in.nextInt();
+//    		String newPinString = Integer.toString(newPin);
+//    		
+//    		System.out.println(Integer.toString(newPin));
+//    		System.out.print("\n" + Integer.toString(newPin).length());
+//    		System.out.print("\n" + PIN_WIDTH);
+////    		System.out.print("\n" + (newPinString.length()) == PIN_WIDTH);
+//    		
+//    		if(verifyName(PIN_WIDTH, PIN_WIDTH, newPinString)) {
+//    			validPinNumberLength = true;
+//    		}
+//    		
+//    		if(verifyIntRange(PIN_MIN, PIN_MAX, newPin)) {
+//    			validPinNumberRange = true;
+//    		}
+//    	}
+    	newPin = 1234;
+    	
     	
     	activeAccount = bank.createAccount(newPin, new User(newFirstName, newLastName));
     	
     	System.out.print("\nThank you. Your account number is " + activeAccount.getAccountNo() + ".");
     	System.out.print("\nPlease login to access your newly created account.");
+    	
+    	bank.save();
+    }
+    
+    public boolean verifyName(int min, int max, String userInput) {
+    	if(userInput.length() < min || userInput.length() > max) {
+    		return false;
+    	}else if(userInput.length() >= min && userInput.length() <= max) {
+    		return true;
+    	}else if(min == max){ 
+    		if(userInput.length() == max && userInput.length() == min) {
+    			return true;
+    		}else {
+    			return false;
+    		}
+    	}else {
+    		return false;
+    	}
+    }
+    
+    public boolean verifyIntRange(int min, int max, int userInput) {
+    	if(userInput < min || userInput > max) {
+    		return false;
+    	}else if(userInput >= min && userInput <= max) {
+    		return true;
+    	}else {
+    		return false;
+    	}
+    }
+    
+    public boolean verifyDoubleRange(double min, double max, double userInput) {
+    	if(userInput < min || userInput > max) {
+    		return false;
+    	}else if(userInput >= min && userInput <= max) {
+    		return true;
+    	}else {
+    		return false;
+    	}
+    }
+    
+    public boolean verifyLongRange(long min, long max, long userInput) {
+    	if(userInput < min || userInput > max) {
+    		return false;
+    	}else if(userInput >= min && userInput <= max) {
+    		return true;
+    	}else {
+    		return false;
+    	}
     }
     
     /*
