@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.util.Scanner;
-//h
 
 public class ATM {
     
@@ -270,6 +269,7 @@ public class ATM {
     }
     
     public void newAccount() {
+    	
     	boolean validFirstName = true;
     	boolean validLastName = true;
     	boolean validPinNumberRange = true;
@@ -280,8 +280,10 @@ public class ATM {
     	int newPin = 0;
     	
     	while(validFirstName) {
+    		
 	    	System.out.print("\nFirst name: ");
 	    	newFirstName = in.next();
+	    	
 	    	if(verifyName(FIRST_NAME_MIN_WIDTH, FIRST_NAME_WIDTH, newFirstName)) {
 	    		validFirstName = false;
 	    	}
@@ -289,33 +291,31 @@ public class ATM {
     	}
     	
     	while(validLastName) {
+    		
 	    	System.out.print("\nLast name: ");
 	    	newLastName = in.next();
+	    	
 	    	if(verifyName(LAST_NAME_MIN_WIDTH, LAST_NAME_WIDTH, newLastName)) {
 	    		validLastName = false;
 	    	}
     	
     	}
     	
-//    	while(validPinNumberRange && validPinNumberLength) {
-//    		System.out.print("\nPin: ");
-//    		newPin = in.nextInt();
-//    		String newPinString = Integer.toString(newPin);
-//    		
-//    		System.out.println(Integer.toString(newPin));
-//    		System.out.print("\n" + Integer.toString(newPin).length());
-//    		System.out.print("\n" + PIN_WIDTH);
-////    		System.out.print("\n" + (newPinString.length()) == PIN_WIDTH);
-//    		
-//    		if(verifyName(PIN_WIDTH, PIN_WIDTH, newPinString)) {
-//    			validPinNumberLength = true;
-//    		}
-//    		
-//    		if(verifyIntRange(PIN_MIN, PIN_MAX, newPin)) {
-//    			validPinNumberRange = true;
-//    		}
-//    	}
-    	newPin = 1234;
+    	while(validPinNumberRange && validPinNumberLength) {
+    		
+    		System.out.print("\nPin: ");
+    		newPin = in.nextInt();
+    		String newPinString = Integer.toString(newPin);
+    		
+    		if(verifyName(PIN_WIDTH, PIN_WIDTH, newPinString)) {
+    			validPinNumberLength = false;
+    		}
+    		
+    		if(verifyIntRange(PIN_MIN, PIN_MAX, newPin)) {
+    			validPinNumberRange = false;
+    		}
+    	}
+    	
     	
     	
     	activeAccount = bank.createAccount(newPin, new User(newFirstName, newLastName));
