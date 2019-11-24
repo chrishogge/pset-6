@@ -16,6 +16,8 @@ public class ATM {
     public static final int INVALID = 0;
     public static final int INSUFFICIENT = 1;
     public static final int SUCCESS = 2;
+    public static final int MAXIMUM = 3;
+    public static final int INVALID_AMOUNT = 4;
     
     public static final int FIRST_NAME_MIN_WIDTH = 1;
     public static final int FIRST_NAME_WIDTH = 20;
@@ -33,6 +35,8 @@ public class ATM {
     public static final int BALANCE_WIDTH = 15;
     public static final double BALANCE_MIN = 0.00;
     public static final double BALANCE_MAX = 999999999999.99;
+    
+    public static final double TRANSFER_MIN = 0.00;
     
     boolean session = true;
     String accountNoString = "";
@@ -240,10 +244,23 @@ public class ATM {
     	
     	BankAccount transferAccount = bank.getAccount(transferAccountNo);
     	
-    	activeAccount.withdraw(transferAmount);
-    	transferAccount.deposit(transferAmount);
+    	int transferResult = activeAccount.transfer(activeAccount.getAccountNo(), transferAccountNo, transferAmount);
     	
-    	System.out.print("\nTransfer accepted.");
+    	if(transferResult == INVALID) {
+    		System.out.print("\nTransfer rejected. Destination account not found.");
+    	}else if(transferResult == INSUFFICIENT) {
+    		System.out.print("\nTransfer rejected. Insufficient funds.");
+    	}else if(transferResult == MAXIMUM) {
+    		System.out.print("\nTransfer rejected. Amount would cause destination balance to exceed $999,999,999,999.99.");
+    	}else if(transferResult == INVALID_AMOUNT) {
+    		System.out.print("\nTransfer rejected. Amount must be greater than $0.00.");
+    	}else if(transferResult == SUCCESS) {
+    	
+	    	activeAccount.withdraw(transferAmount);
+	    	transferAccount.deposit(transferAmount);
+	    	
+	    	System.out.print("\nTransfer accepted.");
+    	}
     	
     	bank.save();
     	

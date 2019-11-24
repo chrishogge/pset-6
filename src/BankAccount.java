@@ -89,4 +89,24 @@ public class BankAccount {
     	return ATM.SUCCESS;
     }
     
+    public int transfer(long accountNo, long transferAccountNo, double amount) {
+    	double accountBalance = bank.getAccount(accountNo).getBalance();
+    	double transAccountBalance = 0.00;
+    	try {
+    		transAccountBalance = bank.getAccount(transferAccountNo).getBalance();
+    	}catch(NullPointerException nfe) {
+    		return ATM.INVALID;
+    	}
+    	
+    	if((accountBalance - amount) < ATM.BALANCE_MIN) {
+    		return ATM.INSUFFICIENT;
+    	} else if((transAccountBalance + amount) > ATM.BALANCE_MAX) {
+    		return ATM.MAXIMUM;
+    	} else if(amount < ATM.TRANSFER_MIN) {
+    		return ATM.INVALID_AMOUNT;
+    	}else {
+    		return ATM.SUCCESS;
+    	}
+    }
+    
 }
