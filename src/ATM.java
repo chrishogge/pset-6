@@ -212,7 +212,10 @@ public class ATM {
     	int status = activeAccount.deposit(amount);
     	if(status == ATM.INVALID) {
     		System.out.println("\nDeposit rejected. Amount must be greater than $0.00.\n");
+    	}else if(status == ATM.MAXIMUM) {
+    		System.out.print("\nDeposit rejected. Amount would cause balance to exceed $999,999,999,999.99.");
     	}else if(status == ATM.SUCCESS) {
+
     		System.out.println("\nDeposit accepted.\n");
     	}
     	
@@ -344,6 +347,9 @@ public class ATM {
     }
     
     public boolean verifyName(int min, int max, String userInput) {
+    	if(userInput == null) {
+    		return false;
+    	}
     	if(userInput.length() < min || userInput.length() > max) {
     		return false;
     	}else if(userInput.length() >= min && userInput.length() <= max) {
@@ -360,26 +366,10 @@ public class ATM {
     }
     
     public boolean verifyIntRange(int min, int max, int userInput) {
-    	if(userInput < min || userInput > max) {
-    		return false;
-    	}else if(userInput >= min && userInput <= max) {
-    		return true;
-    	}else {
+    	if(userInput == null) {
     		return false;
     	}
-    }
-    
-    public boolean verifyDoubleRange(double min, double max, double userInput) {
-    	if(userInput < min || userInput > max) {
-    		return false;
-    	}else if(userInput >= min && userInput <= max) {
-    		return true;
-    	}else {
-    		return false;
-    	}
-    }
-    
-    public boolean verifyLongRange(long min, long max, long userInput) {
+    	
     	if(userInput < min || userInput > max) {
     		return false;
     	}else if(userInput >= min && userInput <= max) {

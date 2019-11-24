@@ -70,6 +70,10 @@ public class BankAccount {
     public int deposit(double amount) {
     	if(amount <= 0) {
     		return ATM.INVALID;
+    	}else if((balance + amount) > ATM.BALANCE_MAX) {
+    		return ATM.MAXIMUM;
+    	}else if(amount = null) {
+    		return ATM.INVALID;
     	}else {
     		balance = balance + amount;
     	}
@@ -82,6 +86,8 @@ public class BankAccount {
     		return ATM.INVALID;
     	}else if(amount > balance) {
     		return ATM.INSUFFICIENT;
+    	}else if(amount == null) {
+    		return ATM.INVALID;
     	}else {
     		balance = balance - amount;
     	}
@@ -103,6 +109,8 @@ public class BankAccount {
     	} else if((transAccountBalance + amount) > ATM.BALANCE_MAX) {
     		return ATM.MAXIMUM;
     	} else if(amount < ATM.TRANSFER_MIN) {
+    		return ATM.INVALID_AMOUNT;
+    	}else if (amount == null) {
     		return ATM.INVALID_AMOUNT;
     	}else {
     		return ATM.SUCCESS;
