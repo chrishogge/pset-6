@@ -177,7 +177,7 @@ public class ATM {
 	        		
 	        		case LOGOUT: validLogin = false;bank.save();break;
 	        		
-	        		default: System.out.println("\nInvalid selection.\n");
+	        		default: System.out.println("\nInvalid selection.");
 	        		
 	        		}
 	        	}
@@ -214,13 +214,11 @@ public class ATM {
     	if(status == ATM.INVALID) {
     		System.out.println("\nDeposit rejected. Amount must be greater than $0.00.\n");
     	}else if(status == ATM.MAXIMUM) {
-    		System.out.print("\nDeposit rejected. Amount would cause balance to exceed $999,999,999,999.99.");
+    		System.out.print("\nDeposit rejected. Amount would cause balance to exceed $999,999,999,999.99.\n");
     	}else if(status == ATM.SUCCESS) {
 
     		System.out.println("\nDeposit accepted.");
     	}
-    	
-    	bank.update(bank.getAccount(activeAccount.getAccountNo()));    	
     }
     
     public void withdraw() {
@@ -243,24 +241,30 @@ public class ATM {
     	System.out.print("Enter amount: ");
     	double transferAmount = in.nextDouble();
     	
+    	double transferAccountBalance = 0.00;
     	BankAccount transferAccount = bank.getAccount(transferAccountNo);
     	
-    	int transferResult = activeAccount.transfer(activeAccount.getBalance(), transferAccountNo, transferAmount);
+    	try {
+    		transferAccountBalance = transferAccount.getBalance();
+    	}catch(NullPointerException nfe) {
+    		System.out.print("\nTransfer rejected. Destination account not found.\n");
+    		return;
+    	}
     	
-    	if(transferResult == INVALID) {
-    		System.out.print("\nTransfer rejected. Destination account not found.");
-    	}else if(transferResult == INSUFFICIENT) {
-    		System.out.print("\nTransfer rejected. Insufficient funds.");
+    	int transferResult = activeAccount.transfer(activeAccount.getBalance(), transferAccountBalance, transferAmount);
+    	
+    	if(transferResult == INSUFFICIENT) {
+    		System.out.print("\nTransfer rejected. Insufficient funds.\n");
     	}else if(transferResult == MAXIMUM) {
-    		System.out.print("\nTransfer rejected. Amount would cause destination balance to exceed $999,999,999,999.99.");
+    		System.out.print("\nTransfer rejected. Amount would cause destination balance to exceed $999,999,999,999.99.\n");
     	}else if(transferResult == INVALID_AMOUNT) {
-    		System.out.print("\nTransfer rejected. Amount must be greater than $0.00.");
+    		System.out.print("\nTransfer rejected. Amount must be greater than $0.00.\n");
     	}else if(transferResult == SUCCESS) {
     	
 	    	activeAccount.withdraw(transferAmount);
 	    	transferAccount.deposit(transferAmount);
 	    	
-	    	System.out.print("\nTransfer accepted.");
+	    	System.out.print("\nTransfer accepted.\n");
     	}    	
     }
     
