@@ -68,7 +68,7 @@ public class ATM {
     
     public void startup() {
     	
-    	System.out.print("\nWelcome to the AIT ATM!");
+    	System.out.print("\nWelcome to the AIT ATM!\n");
     	session = true;
     	
     	while(session) {
@@ -113,6 +113,7 @@ public class ATM {
         			
         			activeAccount = bank.login(accountNo, pin);
         			accountNo = activeAccount.getAccountNo();
+        			loginCycle = false;
         			
         		}catch(NullPointerException nfe) {
         			
@@ -153,7 +154,7 @@ public class ATM {
         			}
         		}
 	     
-        		loginCycle = false;
+        }
         		activeAccount = bank.login(accountNo,pin);
 	            accountNo = activeAccount.getAccountNo();
 	            
@@ -168,11 +169,11 @@ public class ATM {
 	        		
 	        		case VIEW: showBalance(accountNo);break;
 	        		
-	        		case DEPOSIT: deposit();break;
+	        		case DEPOSIT: deposit(); bank.save();break;
 	        		
-	        		case WITHDRAW: withdraw();break;
+	        		case WITHDRAW: withdraw();bank.save();break;
 	        		
-	        		case TRANSFER: transfer();break;
+	        		case TRANSFER: transfer();bank.save();break;
 	        		
 	        		case LOGOUT: validLogin = false;bank.save();break;
 	        		
@@ -181,7 +182,7 @@ public class ATM {
 	        		}
 	        	}
         }
-    }
+    
     
     public boolean isValidLogin(long accountNo, int pin) {
     	return accountNo==activeAccount.getAccountNo() && pin==activeAccount.getPin();
@@ -202,7 +203,7 @@ public class ATM {
     }
     
     public void showBalance(long accountNo) {
-    	System.out.println(activeAccount.getBalance());
+    	System.out.println("\nCurrent balance: $" + activeAccount.getBalance());
     }
     
     public void deposit() {
@@ -216,12 +217,10 @@ public class ATM {
     		System.out.print("\nDeposit rejected. Amount would cause balance to exceed $999,999,999,999.99.");
     	}else if(status == ATM.SUCCESS) {
 
-    		System.out.println("\nDeposit accepted.\n");
+    		System.out.println("\nDeposit accepted.");
     	}
     	
-    	bank.update(bank.getAccount(activeAccount.getAccountNo()));
-    	bank.save();
-    	
+    	bank.update(bank.getAccount(activeAccount.getAccountNo()));    	
     }
     
     public void withdraw() {
@@ -234,9 +233,8 @@ public class ATM {
         } else if (status == ATM.INSUFFICIENT) {
             System.out.println("\nWithdrawal rejected. Insufficient funds.\n");
         } else if (status == ATM.SUCCESS) {
-            System.out.println("\nWithdrawal accepted.\n");
+            System.out.println("\nWithdrawal accepted.");
         }
-        bank.save();
     }
     
     public void transfer() {
@@ -247,7 +245,7 @@ public class ATM {
     	
     	BankAccount transferAccount = bank.getAccount(transferAccountNo);
     	
-    	int transferResult = activeAccount.transfer(activeAccount.getAccountNo(), transferAccountNo, transferAmount);
+    	int transferResult = activeAccount.transfer(activeAccount.getBalance(), transferAccountNo, transferAmount);
     	
     	if(transferResult == INVALID) {
     		System.out.print("\nTransfer rejected. Destination account not found.");
@@ -263,10 +261,7 @@ public class ATM {
 	    	transferAccount.deposit(transferAmount);
 	    	
 	    	System.out.print("\nTransfer accepted.");
-    	}
-    	
-    	bank.save();
-    	
+    	}    	
     }
     
     public boolean isNum(String inputString) {
@@ -366,9 +361,6 @@ public class ATM {
     }
     
     public boolean verifyIntRange(int min, int max, int userInput) {
-    	if(userInput == null) {
-    		return false;
-    	}
     	
     	if(userInput < min || userInput > max) {
     		return false;

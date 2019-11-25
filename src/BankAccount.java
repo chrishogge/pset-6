@@ -72,8 +72,6 @@ public class BankAccount {
     		return ATM.INVALID;
     	}else if((balance + amount) > ATM.BALANCE_MAX) {
     		return ATM.MAXIMUM;
-    	}else if(amount = null) {
-    		return ATM.INVALID;
     	}else {
     		balance = balance + amount;
     	}
@@ -86,8 +84,6 @@ public class BankAccount {
     		return ATM.INVALID;
     	}else if(amount > balance) {
     		return ATM.INSUFFICIENT;
-    	}else if(amount == null) {
-    		return ATM.INVALID;
     	}else {
     		balance = balance - amount;
     	}
@@ -95,11 +91,11 @@ public class BankAccount {
     	return ATM.SUCCESS;
     }
     
-    public int transfer(long accountNo, long transferAccountNo, double amount) {
-    	double accountBalance = bank.getAccount(accountNo).getBalance();
+    public int transfer(double accountBalance, long transferAccountNo, double amount) {
+    	BankAccount transferAccount = bank.getAccount(transferAccountNo);
     	double transAccountBalance = 0.00;
     	try {
-    		transAccountBalance = bank.getAccount(transferAccountNo).getBalance();
+    		transAccountBalance = transferAccount.getBalance();
     	}catch(NullPointerException nfe) {
     		return ATM.INVALID;
     	}
@@ -109,8 +105,6 @@ public class BankAccount {
     	} else if((transAccountBalance + amount) > ATM.BALANCE_MAX) {
     		return ATM.MAXIMUM;
     	} else if(amount < ATM.TRANSFER_MIN) {
-    		return ATM.INVALID_AMOUNT;
-    	}else if (amount == null) {
     		return ATM.INVALID_AMOUNT;
     	}else {
     		return ATM.SUCCESS;
